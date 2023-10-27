@@ -2,6 +2,7 @@ package com.proyectospring.demo.controllers;
 
 import com.proyectospring.demo.dao.UsuarioDao;
 import com.proyectospring.demo.models.Usuario;
+import com.proyectospring.demo.utils.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +15,18 @@ public class AuthController {
     @Autowired
     private UsuarioDao usuarioDao;
 
+    @Autowired
+    private JWTUtil jwtUtil;
+
     @RequestMapping(value = "api/login", method = RequestMethod.POST)
     public String login (@RequestBody Usuario usuario) {
 
-       if (usuarioDao.verificarCredenciales(usuario)) {
+         Usuario usuarioLoggeado = usuarioDao.obtenerUsuarioPorCredenciales(usuario);
+       if (usuarioLoggeado != null) {
            //throw new RuntimeException("Credenciales inválidas");
-           //creación de token
+              String tokenJWT = jwtUtil.create(String.valueOf(usuarioLoggeado.getId()), usuarioLoggeado.getEmail());
 
-           return "OK";
+           return tokenJWT;
        }
           return "FAIL";
     }

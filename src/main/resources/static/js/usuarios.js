@@ -2,18 +2,19 @@
 $(document).ready(function() {
     cargarUsuarios();
   $('#usuarios').DataTable();
+
+  actualizarEmailDelUsuario();
 });
 
+function actualizarEmailDelUsuario() {
+document.getElementById('txt-email-usuario').outerHTML = localStorage.email;
+}
 
 async function cargarUsuarios(){
 
     const request = await fetch('api/usuarios', {
         method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-
-        }
+        headers: getHeaders()
     });
 
     const usuarios = await request.json();
